@@ -8,6 +8,7 @@ interface VideoModalProps {
     description: string;
     thumbnail: string;
     date: string;
+    videoUrl?: string;
   };
   onClose: () => void;
 }
@@ -16,8 +17,11 @@ const VideoModal: React.FC<VideoModalProps> = ({ video, onClose }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   
-  // Get video source information
-  const { src: videoSrc, type: videoType } = getVideoSource(video.thumbnail);
+  // Get video source information - now using videoUrl if available
+  const videoSrcFromProp = video.videoUrl || '';
+  const { src: videoSrc, type: videoType } = videoSrcFromProp 
+    ? { src: videoSrcFromProp, type: 'video/mp4' }
+    : getVideoSource(video.thumbnail);
   
   // Log video path for debugging
   useEffect(() => {

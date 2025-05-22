@@ -11,6 +11,7 @@ import usePreventExternalNavigation from './utils/usePreventExternalNavigation';
 import { useApiKeyStatus } from './utils/apiConfig';
 import { loadEnhancedArtifacts } from './utils/enhancedArtifacts';
 import { ensureEnhancedData } from './utils/autoEnhance';
+import { enhanceArtifactsWithVideos } from './utils/enhanceVideoArtifacts';
 
 function App() {
   const [showPWAPrompt, setShowPWAPrompt] = useState(false);
@@ -31,6 +32,8 @@ function App() {
         await ensureEnhancedData();
         // Then load it into the app
         await loadEnhancedArtifacts();
+        // Also enhance video artifacts with direct URLs
+        await enhanceArtifactsWithVideos();
         console.log('Enhanced artifact data loaded in App');
       } catch (error) {
         console.error('Error loading enhanced artifact data:', error);

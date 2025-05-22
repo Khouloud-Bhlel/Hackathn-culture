@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Video and Image Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .video-container { margin-bottom: 20px; }
+    .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+    .image-item img { width: 100%; height: 200px; object-fit: cover; }
+    h2 { margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <h1>Video and Image Test</h1>
+  
+  <h2>Videos</h2>
+  <div class="video-container">
+    <h3>Video 1</h3>
+    <video controls width="400">
+      <source src="/videos/164d8230-9b7c-4c64-99b5-3301f1b5ab58.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  
+  <div class="video-container">
+    <h3>Video 2</h3>
+    <video controls width="400">
+      <source src="/videos/1def7a12-fc1b-44c0-a194-dce3b16d149f.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  
+  <div class="video-container">
+    <h3>Video 3</h3>
+    <video controls width="400">
+      <source src="/videos/23dbabf0-23d0-485b-99e7-3f8b6f5ed1e7.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  
+  <h2>Images</h2>
+  <div class="image-grid" id="imageGrid">
+    <!-- Images will be loaded dynamically with JavaScript -->
+  </div>
+  
+  <script>
+    // Get all images from the /images directory
+    const imageFiles = [
+      '0897001c-bfd3-4099-9f5f-6a8799629397.jpeg',
+      '0a403a17-d520-4eb3-8e7f-776d6afdb7eb.jpeg',
+      '32fda20c-c9bd-4aab-b2cf-e0e33454efda.jpeg',
+      '4ed0dd86-c549-40e7-a37a-a39ab2054b62.jpeg',
+      '54d87251-629a-4f20-8531-59e5fc7e5aa9.jpeg',
+      '79255007-ebd4-4265-a443-db0ebd6cc166.jpeg',
+      '8647f546-091f-4e39-a4d5-0cc647c2652c.jpeg',
+      '8f87e511-92ab-4054-945c-84e1f324707c.jpeg',
+      '95854e3d-c03d-41fd-bf70-1db714787537.jpeg',
+      '989c1827-a0ea-4184-afd6-e561579e2172.jpeg',
+      '9a245834-3207-4b43-90a9-00651d2faede.jpeg',
+      '9ce4d8f3-d071-4184-afb7-1e9655d4a80c.jpeg',
+      'a161da6b-253c-4a00-ac29-4dcb0a688d69.jpeg',
+      'a56bdc62-1c47-4021-9549-edc4ac6024b3.jpeg',
+      'b5b51605-1c17-40a4-b678-557251497897.jpeg',
+      'e554eec8-8887-44f7-ad4c-223e3ce8fc94.jpeg',
+      'fa773ac1-56de-4378-91fb-5b529185e67d.jpeg'
+    ];
+    
+    const imageGrid = document.getElementById('imageGrid');
+    
+    imageFiles.forEach(file => {
+      const imageItem = document.createElement('div');
+      imageItem.className = 'image-item';
+      
+      const img = document.createElement('img');
+      img.src = `/images/${file}`;
+      img.alt = file;
+      
+      imageItem.appendChild(img);
+      imageGrid.appendChild(imageItem);
+    });
+  </script>
+</body>
+</html>

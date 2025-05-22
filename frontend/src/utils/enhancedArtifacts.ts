@@ -9,11 +9,12 @@ export interface EnhancedMediaItem {
   thumbnail: string;
   date: string;
   modelUrl?: string;
+  videoUrl?: string;  // Added for video items to specify direct path to video files
   details?: {
     period: string;
     location: string;
     material: string;
-    dimensions: string;
+    dimensions: string | { width: string; height: string; }; // Support for both string and object formats
     story: string;
   };
 }
