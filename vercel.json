@@ -7,7 +7,7 @@
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "env": {
-    "VITE_OPENAI_API_KEY": "@openai_api_key"
+    "VITE_OPENAI_API_KEY": "your_openai_api_key_here"
   },
   "headers": [
     {

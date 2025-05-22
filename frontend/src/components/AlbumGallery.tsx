@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Share2, Play, Image as ImageIcon, Search, ArrowUp, Cuboid as Cube, Info } from 'lucide-react';
-import { getEnhancedMediaItems, EnhancedMediaItem } from '../utils/enhancedArtifacts';
+import { getEnhancedMediaItems, loadEnhancedArtifacts, EnhancedMediaItem } from '../utils/enhancedArtifacts';
 import ImageModal from './ImageModal';
 import VideoModal from './VideoModal';
 import Scene3D from './3DModel';
@@ -19,9 +19,14 @@ const AlbumGallery: React.FC = () => {
 
   useEffect(() => {
     // Get enhanced media items
-    const items = getEnhancedMediaItems();
-    setDisplayItems(items);
-    setIsLoading(false);
+    async function loadData() {
+      setIsLoading(true);
+      const items = await loadEnhancedArtifacts();
+      setDisplayItems(items);
+      setIsLoading(false);
+    }
+    
+    loadData();
   }, []);
 
   useEffect(() => {

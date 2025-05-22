@@ -253,9 +253,9 @@ export const getVideoForThumbnail = (thumbnailPath: string): string => {
   
   // If we have a direct mapping, use it
   if (videoMap[fileName]) {
-    return `/images/${videoMap[fileName]}`;
+    return `/videos/${videoMap[fileName]}`;
   }
   
   // Otherwise use a default video
-  return `/images/${videoFiles[0]}`;
+  return `/videos/${videoFiles[0]}`;
 };

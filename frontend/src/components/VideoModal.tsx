@@ -17,7 +17,12 @@ const VideoModal: React.FC<VideoModalProps> = ({ video, onClose }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   
   // Get video source information
-  const { src: videoSrc } = getVideoSource(video.thumbnail);
+  const { src: videoSrc, type: videoType } = getVideoSource(video.thumbnail);
+  
+  // Log video path for debugging
+  useEffect(() => {
+    console.log(`Loading video: ${videoSrc}`);
+  }, [videoSrc]);
 
   // Handle escape key to exit fullscreen or close modal
   useEffect(() => {
@@ -64,7 +69,6 @@ const VideoModal: React.FC<VideoModalProps> = ({ video, onClose }) => {
         <div className={isFullscreen ? "w-full h-full" : "aspect-video w-full"}>
           <div className="relative w-full h-full">
             <video
-              src={videoSrc}
               className="w-full h-full object-contain bg-black"
               controls
               autoPlay
@@ -72,7 +76,10 @@ const VideoModal: React.FC<VideoModalProps> = ({ video, onClose }) => {
               poster={video.thumbnail}
               onPlay={() => setIsPlaying(true)}
               onPause={() => setIsPlaying(false)}
-            />
+            >
+              <source src={videoSrc} type={videoType} />
+              Your browser does not support the video tag.
+            </video>
             {!isPlaying && (
               <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/50 to-transparent"></div>
             )}
