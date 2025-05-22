@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Share2, Play, Image as ImageIcon, Search, ArrowUp, Cuboid as Cube, Info } from 'lucide-react';
-import { getEnhancedMediaItems, loadEnhancedArtifacts, EnhancedMediaItem } from '../utils/enhancedArtifacts';
+import { loadEnhancedArtifacts, EnhancedMediaItem } from '../utils/enhancedArtifacts';
 import ImageModal from './ImageModal';
 import VideoModal from './VideoModal';
 import Scene3D from './3DModel';
@@ -224,7 +224,15 @@ const AlbumGallery: React.FC = () => {
 
       {selectedMedia?.type === 'images' && (
         <ImageModal 
-          image={selectedMedia}
+          image={{
+            ...selectedMedia,
+            details: selectedMedia.details ? {
+              ...selectedMedia.details,
+              dimensions: typeof selectedMedia.details.dimensions === 'object' 
+                ? `${selectedMedia.details.dimensions.width}x${selectedMedia.details.dimensions.height}`
+                : selectedMedia.details.dimensions
+            } : undefined
+          }}
           onClose={() => setSelectedMedia(null)}
         />
       )}
@@ -238,7 +246,15 @@ const AlbumGallery: React.FC = () => {
 
       {showModelDetails && selectedMedia?.type === '3d' && (
         <ModelDetails
-          model={selectedMedia}
+          model={{
+            ...selectedMedia,
+            details: selectedMedia.details ? {
+              ...selectedMedia.details,
+              dimensions: typeof selectedMedia.details.dimensions === 'object' 
+                ? `${selectedMedia.details.dimensions.width}x${selectedMedia.details.dimensions.height}`
+                : selectedMedia.details.dimensions
+            } : undefined
+          }}
           onClose={() => {
             setShowModelDetails(false);
             setSelectedMedia(null);
