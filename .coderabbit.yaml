@@ -1,0 +1,4 @@
+diagrams:
+  auto_generate: true
+  scope: full_project
+  diagram_types: [sequence, component]

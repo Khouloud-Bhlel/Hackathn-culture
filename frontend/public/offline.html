@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>متحف سلقطة - أنت غير متصل بالإنترنت</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="متحف سلقطة">
+  <meta name="theme-color" content="#641B2E">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #641B2E;
+      background-color: #FDF0D9;
+      direction: rtl;
+      overscroll-behavior: none;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .container {
+      padding: 20px;
+      max-width: 90%;
+      width: 400px;
+    }
+    h1 {
+      margin-bottom: 10px;
+      font-size: 1.5rem;
+    }
+    p {
+      margin-bottom: 20px;
+      opacity: 0.8;
+    }
+    .icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+    .button {
+      background-color: #641B2E;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 24px;
+      text-decoration: none;
+      display: inline-block;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      margin: 5px;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+    .button:active {
+      transform: scale(0.98);
+      background-color: #7a2139;
+    }
+    .install-button {
+      background-color: #82AD3B;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    .install-button svg {
+      margin-left: 8px;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    /* Only show the install button if we're not in standalone mode */
+    @media (display-mode: standalone), (display-mode: fullscreen) {
+      #installButton {
+        display: none !important;
+      }
+    }
+    .reconnecting {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 5px;
+      font-size: 0.9rem;
+      color: #82AD3B;
+    }
+    .dot {
+      width: 6px;
+      height: 6px;
+      background-color: #82AD3B;
+      border-radius: 50%;
+      margin-left: 4px;
+      animation: pulse 1.5s infinite;
+    }
+    .dot:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+    .dot:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">📡</div>
+    <h1>أنت غير متصل بالإنترنت</h1>
+    <p>يبدو أن لديك مشكلة في الاتصال بالإنترنت. سيتم تحميل التطبيق بمجرد استعادة الاتصال.</p>
+    <button class="button" onclick="window.location.reload()">إعادة المحاولة</button>
+    
+    <div id="reconnecting" class="reconnecting" style="display: none;">
+      محاولة الاتصال
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    
+    <button id="installButton" class="button install-button" style="display: none;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      تثبيت التطبيق
+    </button>
+  </div>
+  
+  <script>
+    // Show reconnecting status after a few seconds
+    setTimeout(() => {
+      document.getElementById('reconnecting').style.display = 'flex';
+    }, 3000);
+  
+    // Check if the app can be installed
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      // Show the install button
+      const installButton = document.getElementById('installButton');
+      installButton.style.display = 'flex';
+      
+      installButton.addEventListener('click', () => {
+        // Show the install prompt
+        e.prompt();
+        // Wait for the user to respond to the prompt
+        e.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+            installButton.style.display = 'none';
+            // Store that the app was installed
+            localStorage.setItem('pwa-installed', 'true');
+          } else {
+            console.log('User dismissed the install prompt');
+          }
+        });
+      });
+    });
+    
+    // Check if we're already running as an installed app
+    if (window.matchMedia('(display-mode: standalone)').matches || 
+        window.navigator.standalone === true ||
+        localStorage.getItem('pwa-installed') === 'true') {
+      document.getElementById('installButton').style.display = 'none';
+    }
+    
+    // Set up automatic retry
+    let retryCount = 0;
+    const maxRetries = 5;
+    const retryInterval = 5000; // 5 seconds
+    
+    function attemptReconnect() {
+      if (retryCount < maxRetries) {
+        retryCount++;
+        setTimeout(() => {
+          fetch(window.location.href, { method: 'HEAD' })
+            .then(response => {
+              if (response.ok) {
+                window.location.reload();
+              } else {
+                attemptReconnect();
+              }
+            })
+            .catch(() => attemptReconnect());
+        }, retryInterval);
+      }
+    }
+    
+    // Start the retry process
+    attemptReconnect();
+    
+    // Also try to reconnect when the user becomes online
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>

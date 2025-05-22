@@ -1,0 +1,51 @@
+{
+  "name": "vite-react-typescript-starter",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npm run prepare-data && vite",
+    "build": "npm run prepare-data && ./scripts/generate-runtime-env.sh && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "enhance-artifacts": "node ./bin/enhance-artifacts",
+    "enhance-with-openai": "npx tsx ./scripts/openaiEnhancer.js",
+    "generate-default": "npx tsx ./scripts/generateDefaultEnhanced.js",
+    "prepare-data": "./scripts/pre-dev.sh",
+    "voice-chat-only": "echo 'Starting app with OpenAI API used for voice chat only (not for artifact descriptions)' && npm run dev",
+    "voice-chat": "./run-voice-chat.sh",
+    "generate-runtime-env": "./scripts/generate-runtime-env.sh"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.102.3",
+    "@react-three/fiber": "^8.15.19",
+    "@zxing/browser": "^0.1.5",
+    "dotenv": "^16.5.0",
+    "lucide-react": "^0.344.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-qr-barcode-scanner": "^2.1.2",
+    "react-qr-code": "^2.0.15",
+    "react-webcam": "^7.2.0",
+    "three": "^0.162.0",
+    "tsx": "^4.19.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@types/three": "^0.162.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.18",
+    "eslint": "^9.9.1",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.11",
+    "globals": "^15.9.0",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.3.0",
+    "vite": "^5.4.2",
+    "vite-plugin-pwa": "^1.0.0"
+  }
+}

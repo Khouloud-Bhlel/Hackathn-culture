@@ -1,0 +1,96 @@
+/**
+ * Mobile app-specific styles that apply only when running as an installed PWA
+ */
+
+/* Add these styles when in standalone mode (installed as PWA) */
+@media (display-mode: standalone), (display-mode: fullscreen) {
+  /* Remove browser-specific UI elements */
+  body {
+    overscroll-behavior: none; /* Prevent pull-to-refresh and navigation gestures */
+    -webkit-touch-callout: none; /* Disable callouts */
+    -webkit-user-select: none; /* Disable selection */
+    user-select: none; /* Standard property for compatibility */
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
+  }
+  
+  /* Add safe area insets support for notches and home indicators */
+  header, footer, .fixed-element {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: max(env(safe-area-inset-left), 8px);
+    padding-right: max(env(safe-area-inset-right), 8px);
+  }
+  
+  /* Fixed header for app-like feeling */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Add bottom spacing on main content to avoid being hidden behind home indicators */
+  main, .main-content {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  
+  /* Page transitions for app-like navigation */
+  .page-transition-enter {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  
+  .page-transition-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 300ms, transform 300ms;
+  }
+  
+  /* Make scrolling feel more native */
+  .scroll-container {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    /* Removed scroll-snap-type to prevent snap-scrolling which can feel unnatural */
+  }
+  
+  /* Hide install buttons when in standalone mode */
+  .install-button {
+    display: none !important;
+  }
+  
+  /* Full height layouts for installed app */
+  html, body, #root {
+    height: 100%;
+    /* Removed overflow: hidden to allow natural scrolling */
+  }
+  
+  #root {
+    display: flex;
+    flex-direction: column;
+    /* Allow natural scrolling */
+    overflow-y: visible;
+  }
+  
+  /* iOS-style loader */
+  .ios-spinner {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(100, 27, 46, 0.3);
+    border-top-color: #641B2E;
+    animation: ios-spin 1s linear infinite;
+  }
+  
+  @keyframes ios-spin {
+    to { transform: rotate(360deg); }
+  }
+}
+
+/* Hide browser UI indicator for specific iOS versions */
+@media not all and (display-mode: standalone) {
+  /* We provide specific styles for browser mode */
+  body {
+    /* Ensure body takes full height in browser mode too */
+    min-height: 100vh;
+  }
+}

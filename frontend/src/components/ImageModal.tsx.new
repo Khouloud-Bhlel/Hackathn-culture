@@ -1,0 +1,145 @@
+// filepath: /home/khouloud/Documents/all personnel  projects/project_hakathon-culture/frontend/src/components/ImageModal.tsx
+import React, { useState } from 'react';
+import { X, Mic, MessageSquare } from 'lucide-react';
+
+interface ImageModalProps {
+  image: {
+    title: string;
+    description: string;
+    thumbnail: string;
+  } | null;
+  onClose: () => void;
+}
+
+interface ChatMessage {
+  text: string;
+  timestamp: Date;
+}
+
+const ImageModal: React.FC<ImageModalProps> = ({ image, onClose }) => {
+  const [showDetails, setShowDetails] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+
+  if (!image) return null;
+
+  const handleVoiceChat = () => {
+    setIsListening(!isListening);
+    if (!isListening) {
+      // Simulating voice input for demonstration
+      setTimeout(() => {
+        addMessage("أخبرني المزيد عن هذه القطعة الأثرية");
+      }, 1000);
+      setTimeout(() => {
+        addMessage("هذه القطعة تعود إلى العصر الفرعوني القديم، وتحمل نقوشاً فريدة");
+      }, 2000);
+    }
+  };
+
+  const addMessage = (text: string) => {
+    setMessages(prev => [...prev, { text, timestamp: new Date() }]);
+  };
+
+  if (showDetails) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-burgundy-900/90 backdrop-blur-sm">
+        <div className="relative bg-white rounded-2xl overflow-hidden w-full max-w-4xl animate-modal-open">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-300 z-10"
+          >
+            <X size={20} className="text-burgundy-900" />
+          </button>
+
+          <div className="grid md:grid-cols-2 gap-0">
+            <div className="relative aspect-square md:aspect-auto">
+              <img
+                src={image.thumbnail}
+                alt={image.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-burgundy-900/60 to-transparent" />
+            </div>
+
+            <div className="p-8 relative min-h-[500px]">
+              <h3 className="text-2xl font-bold mb-4 text-burgundy-900">{image.title}</h3>
+              <p className="text-gray-600 mb-6">{image.description}</p>
+
+              <div className="absolute inset-x-0 bottom-0 p-8">
+                <div className="space-y-4 mb-24">
+                  {messages.map((msg, index) => (
+                    <div
+                      key={index}
+                      className={`message-bubble animate-float-up opacity-0`}
+                      style={{ animationDelay: `${index * 0.2}s`, animationFillMode: 'forwards' }}
+                    >
+                      <div className="flex items-start gap-2">
+                        <MessageSquare size={16} className="mt-1" />
+                        <p>{msg.text}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={handleVoiceChat}
+                  className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 p-6 rounded-full ${
+                    isListening ? 'bg-green-600 scale-110' : 'bg-burgundy-900'
+                  } text-white shadow-lg hover:scale-110 transition-all duration-300`}
+                  style={{
+                    animation: isListening ? 'pulse 2s infinite' : 'none',
+                  }}
+                >
+                  <Mic size={32} className={isListening ? 'animate-pulse' : ''} />
+                  <div className={`absolute inset-0 rounded-full bg-current ${
+                    isListening ? 'animate-ping opacity-25' : 'opacity-0'
+                  }`}></div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-burgundy-900/90 backdrop-blur-sm">
+      <div className="relative bg-white rounded-2xl overflow-hidden w-full max-w-4xl animate-modal-open">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-300 z-10"
+        >
+          <X size={20} className="text-burgundy-900" />
+        </button>
+
+        <div className="grid md:grid-cols-2 gap-0">
+          <div className="relative aspect-square md:aspect-auto">
+            <img
+              src={image.thumbnail}
+              alt={image.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-burgundy-900/60 to-transparent" />
+          </div>
+
+          <div className="p-8">
+            <h3 className="text-2xl font-bold mb-4 text-burgundy-900">{image.title}</h3>
+            <p className="text-gray-600 mb-6">{image.description}</p>
+
+            <div className="flex justify-between items-center">
+              <button
+                onClick={() => setShowDetails(true)}
+                className="btn btn-primary"
+              >
+                عرض التفاصيل
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ImageModal;

@@ -1,0 +1,36 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
+.vercel
+.env
+*.env
+frontend/.env
+frontend/public/runtime-env.js
+frontend/public/runtime-env.js.bak
+enhance-artifacts.sh
+run-openai-enhancer.sh
+start-with-api.sh
+test-api-key.sh
+test-enhanced-features.sh

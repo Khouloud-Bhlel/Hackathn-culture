@@ -1,0 +1,43 @@
+{
+  "short_name": "متحف سلقطة",
+  "name": "متحف سلقطة | رحلة في عمق التاريخ",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "fullscreen", "minimal-ui"],
+  "theme_color": "#641B2E",
+  "background_color": "#FBDB93",
+  "dir": "rtl",
+  "lang": "ar",
+  "orientation": "portrait",
+  "categories": ["education", "entertainment", "travel"],
+  "description": "استكشف أسرار متحف سلقطة... حيث التاريخ يَحكي قصصًا غامضة!",
+  "screenshots": [
+    {
+      "src": "/images/screenshot1.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpg"
+    }
+  ],
+  "prefer_related_applications": false
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline';">
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      background-color: #FBDB93;
+      color: #641B2E;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .loader {
+      border: 5px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 5px solid #641B2E;
+      width: 40px;
+      height: 40px;
+      margin: 20px auto;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #artifact-info {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .type-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-left: 5px;
+    }
+    .type-image {
+      background-color: #15803d;
+      color: white;
+    }
+    .type-video {
+      background-color: #1d4ed8;
+      color: white;
+    }
+    .type-model {
+      background-color: #7e22ce;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h2>جاري التوجيه إلى التطبيق...</h2>
+  <div class="loader"></div>
+  <div id="artifact-info"></div>
+  <p>إذا لم يتم توجيهك تلقائيًا، <a href="/" id="manual-link">انقر هنا</a>.</p>
+
+  <script>
+    // This handles URL redirects for PWA integration
+    document.addEventListener('DOMContentLoaded', function() {
+      // Extract any parameters from the URL
+      const queryParams = new URLSearchParams(window.location.search);
+      
+      // Get the redirect URL (default to root)
+      let redirectUrl = '/';
+      let artifactId = '';
+      let artifactType = 'image'; // Default type
+      
+      // Check for specific path in the query parameters
+      if (queryParams.has('path')) {
+        redirectUrl = queryParams.get('path');
+        
+        // Extract artifact ID if present in the path
+        if (redirectUrl.includes('/artifact/')) {
+          artifactId = redirectUrl.split('/artifact/')[1];
+          artifactType = 'image';
+        } else if (redirectUrl.includes('/video/')) {
+          artifactId = redirectUrl.split('/video/')[1];
+          artifactType = 'video';
+        } else if (redirectUrl.includes('/model/')) {
+          artifactId = redirectUrl.split('/model/')[1];
+          artifactType = 'model';
+        }
+      }
+      
+      // Update manual link with the redirect URL
+      document.getElementById('manual-link').href = redirectUrl;
+      
+      // Update the display with artifact info
+      if (artifactId) {
+        const typeLabel = document.createElement('span');
+        typeLabel.classList.add('type-badge', 'type-' + artifactType);
+        
+        if (artifactType === 'video') {
+          typeLabel.textContent = 'فيديو';
+        } else if (artifactType === 'model') {
+          typeLabel.textContent = 'نموذج ثلاثي الأبعاد';
+        } else {
+          typeLabel.textContent = 'صورة';
+        }
+        
+        document.getElementById('artifact-info').textContent = 'معرف القطعة: ' + artifactId + ' ';
+        document.getElementById('artifact-info').appendChild(typeLabel);
+        
+        // Store the artifact ID and type in localStorage for the main app to use
+        localStorage.setItem('currentArtifactId', artifactId);
+        localStorage.setItem('currentArtifactType', artifactType);
+      }
+      
+      // Redirect to the app
+      setTimeout(function() {
+        window.location.replace(redirectUrl);
+      }, 800);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+<!-- A simple fallback image for offline use -->
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#FBDB93"/>
+  <path d="M256 128c-70.7 0-128 57.3-128 128s57.3 128 128 128 128-57.3 128-128-57.3-128-128-128zm0 32c53 0 96 43 96 96s-43 96-96 96-96-43-96-96 43-96 96-96z" fill="#641B2E"/>
+  <path d="M256 192c-35.3 0-64 28.7-64 64s28.7 64 64 64 64-28.7 64-64-28.7-64-64-64zm0 24c22.1 0 40 17.9 40 40s-17.9 40-40 40-40-17.9-40-40 17.9-40 40-40z" fill="#641B2E"/>
+  <text x="256" y="384" font-family="sans-serif" font-size="24" text-anchor="middle" fill="#641B2E">صورة غير متوفرة</text>
+</svg>
