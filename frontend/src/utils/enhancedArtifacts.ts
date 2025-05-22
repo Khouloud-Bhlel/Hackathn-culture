@@ -28,17 +28,24 @@ let enhancedMediaItems: EnhancedMediaItem[] = [...mediaItems];
  */
 export async function loadEnhancedArtifacts(): Promise<EnhancedMediaItem[]> {
   try {
+    // Import the video enhancer dynamically to avoid circular dependencies
+    const { enhanceArtifactsWithVideos } = await import('./enhanceVideoArtifacts');
+    
     // Try to fetch the enhanced data
     const response = await fetch('/enhanced-artifacts.json');
     
     if (response.ok) {
       const data = await response.json();
-      enhancedMediaItems = data;
-      console.log('Enhanced artifacts data loaded successfully');
+      console.log('Enhanced artifacts data loaded successfully from JSON');
+      
+      // Enhance the data with video URLs
+      const enhancedData = await enhanceArtifactsWithVideos();
+      
+      enhancedMediaItems = enhancedData;
       
       // Save to localStorage as a backup
-      localStorage.setItem('enhanced-artifacts', JSON.stringify(data));
-      return data;
+      localStorage.setItem('enhanced-artifacts', JSON.stringify(enhancedData));
+      return enhancedData;
     } else {
       // Check if we have data in localStorage
       const storedData = localStorage.getItem('enhanced-artifacts');

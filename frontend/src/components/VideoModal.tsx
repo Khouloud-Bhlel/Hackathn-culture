@@ -17,7 +17,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ video, onClose }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   
-  // Get video source information - now using videoUrl if available
+  // Get video source information - now using videoUrl from enhanced-artifacts.json if available
   const videoSrcFromProp = video.videoUrl || '';
   const { src: videoSrc, type: videoType } = videoSrcFromProp 
     ? { src: videoSrcFromProp, type: 'video/mp4' }
@@ -25,8 +25,13 @@ const VideoModal: React.FC<VideoModalProps> = ({ video, onClose }) => {
   
   // Log video path for debugging
   useEffect(() => {
-    console.log(`Loading video: ${videoSrc}`);
-  }, [videoSrc]);
+    console.log(`Loading video: ${videoSrc} for ${video.title}`);
+    
+    // Preload the video
+    const preloadVideo = new Audio();
+    preloadVideo.src = videoSrc;
+    preloadVideo.load();
+  }, [videoSrc, video.title]);
 
   // Handle escape key to exit fullscreen or close modal
   useEffect(() => {

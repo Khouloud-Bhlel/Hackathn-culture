@@ -24,17 +24,21 @@ export async function enhanceArtifactsWithVideos(): Promise<EnhancedMediaItem[]>
       
       // Add videoUrl properties to video items if they don't have them
       const enhancedData = data.map(item => {
-        if (item.type === 'videos' && !item.videoUrl) {
-          // Get video file path from thumbnail using the existing utility
-          const videoPath = getVideoForThumbnail(item.thumbnail);
-          
-          // Update the path to point to the videos directory
-          const videoUrl = videoPath.replace('/images/', '/videos/');
-          
-          return {
-            ...item,
-            videoUrl
-          };
+        if (item.type === 'videos') {
+          if (!item.videoUrl) {
+            // Get video file path from thumbnail using the existing utility
+            const thumbnailName = item.thumbnail.split('/').pop() || '';
+            // Direct mapping for video files based on thumbnail names from enhanced artifacts
+            const videoName = thumbnailName.replace(/\.jpeg$|\.jpg$|\.png$/, '.mp4');
+            const videoUrl = `/videos/${videoName}`;
+            
+            console.log(`Adding videoUrl: ${videoUrl} for ${item.title}`);
+            
+            return {
+              ...item,
+              videoUrl
+            };
+          }
         }
         return item;
       });
