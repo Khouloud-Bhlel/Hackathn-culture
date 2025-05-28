@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "@zxing/browser": "^0.1.5"
+    "@zxing/browser": "^0.1.5",
+    "axios": "^1.9.0",
+    "form-data": "^4.0.2"
   }
 }
