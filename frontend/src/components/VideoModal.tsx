@@ -18,9 +18,16 @@ const VideoModal: React.FC<VideoModalProps> = ({ video, onClose }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   
   // Get video source information - now using videoUrl from enhanced-artifacts.json if available
+  // Ensure we have a valid videoUrl or derive it from the thumbnail
   const videoSrcFromProp = video.videoUrl || '';
+  
+  // Clean up the path if needed (ensure it starts with /)
+  const cleanVideoSrcFromProp = videoSrcFromProp.startsWith('/') 
+    ? videoSrcFromProp 
+    : `/${videoSrcFromProp}`;
+    
   const { src: videoSrc, type: videoType } = videoSrcFromProp 
-    ? { src: videoSrcFromProp, type: 'video/mp4' }
+    ? { src: cleanVideoSrcFromProp, type: 'video/mp4' }
     : getVideoSource(video.thumbnail);
   
   // Log video path for debugging
@@ -77,18 +84,25 @@ const VideoModal: React.FC<VideoModalProps> = ({ video, onClose }) => {
         {/* Video container */}
         <div className={isFullscreen ? "w-full h-full" : "aspect-video w-full"}>
           <div className="relative w-full h-full">
-            <video
-              className="w-full h-full object-contain bg-black"
-              controls
-              autoPlay
-              controlsList="nodownload"
-              poster={video.thumbnail}
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
-            >
-              <source src={videoSrc} type={videoType} />
-              Your browser does not support the video tag.
-            </video>
+            {videoSrc ? (
+              <video
+                className="w-full h-full object-contain bg-black"
+                controls
+                autoPlay
+                controlsList="nodownload"
+                poster={video.thumbnail}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+              >
+                <source src={videoSrc} type={videoType} />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-black">
+                <p className="text-white">Video source not found. Please check the file path.</p>
+                <img src={video.thumbnail} alt={video.title} className="max-h-full object-contain opacity-50" />
+              </div>
+            )}
             {!isPlaying && (
               <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/50 to-transparent"></div>
             )}
