@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Share2, Play, Image as ImageIcon, Search, ArrowUp, Cuboid as Cube, Info } from 'lucide-react';
 import { loadEnhancedArtifacts, EnhancedMediaItem } from '../utils/enhancedArtifacts';
+import { validateMediaPath } from '../utils/mediaPathValidation';
+import { getVideoSource } from '../utils/videoUtils';
+import { enhanceArtifactsWithVideos } from '../utils/enhanceVideoArtifacts';
 import ImageModal from './ImageModal';
 import VideoModal from './VideoModal';
 import Scene3D from './3DModel';
@@ -21,9 +24,23 @@ const AlbumGallery: React.FC = () => {
     // Get enhanced media items
     async function loadData() {
       setIsLoading(true);
-      const items = await loadEnhancedArtifacts();
-      setDisplayItems(items);
-      setIsLoading(false);
+      
+      try {
+        // First try to load enhanced artifacts with correct video URLs
+        const items = await enhanceArtifactsWithVideos();
+        
+        // Validate and fix media paths for all items
+        const validatedItems = await validateMediaPaths(items);
+        
+        setDisplayItems(validatedItems);
+      } catch (error) {
+        console.error('Error loading enhanced artifacts:', error);
+        // Fallback to basic enhanced artifacts
+        const items = await loadEnhancedArtifacts();
+        setDisplayItems(items);
+      } finally {
+        setIsLoading(false);
+      }
     }
     
     loadData();
@@ -61,6 +78,98 @@ const AlbumGallery: React.FC = () => {
       ...prev,
       [id]: !prev[id]
     }));
+  };
+
+  // Validate and fix media paths
+  const validateMediaPaths = async (items: EnhancedMediaItem[]): Promise<EnhancedMediaItem[]> => {
+    const validatedItems = await Promise.all(items.map(async (item) => {
+      const enhancedItem = { ...item };
+      
+      // Check if thumbnail path is valid
+      if (item.thumbnail) {
+        const isThumbnailValid = await validateMediaPath(item.thumbnail, 'image');
+        if (!isThumbnailValid && item.thumbnail.includes('/')) {
+          // Try fixing the path by changing directory
+          const filename = item.thumbnail.split('/').pop() || '';
+          const alternativePath = `/images/${filename}`;
+          const isAlternativeValid = await validateMediaPath(alternativePath, 'image');
+          
+          if (isAlternativeValid) {
+            console.log(`Fixed thumbnail path for ${item.title}: ${alternativePath}`);
+            enhancedItem.thumbnail = alternativePath;
+          }
+        }
+      }
+      
+      // Fix video paths for video items
+      if (item.type === 'videos') {
+        if (!item.videoUrl || !(await validateMediaPath(item.videoUrl, 'video'))) {
+          // If no videoUrl or invalid, get from thumbnail
+          const { src } = getVideoSource(item.thumbnail);
+          const isVideoValid = await validateMediaPath(src, 'video');
+          
+          if (isVideoValid) {
+            console.log(`Fixed video path for ${item.title}: ${src}`);
+            enhancedItem.videoUrl = src;
+          } else {
+            // Try alternative method - direct mapping from filename
+            const thumbnailName = (item.thumbnail.split('/').pop() || '').split('.')[0];
+            const videoFiles = await getVideoFiles();
+            
+            // Find a video with matching filename pattern
+            const matchingVideo = videoFiles.find(video => 
+              video.includes(thumbnailName) || thumbnailName.includes(video.split('.')[0])
+            );
+            
+            if (matchingVideo) {
+              const videoPath = `/videos/${matchingVideo}`;
+              console.log(`Found matching video for ${item.title}: ${videoPath}`);
+              enhancedItem.videoUrl = videoPath;
+            } else {
+              console.warn(`Could not find a valid video for ${item.title}`);
+            }
+          }
+        }
+      }
+      
+      // Fix 3D model paths
+      if (item.type === '3d' && item.modelUrl) {
+        const isModelValid = await validateMediaPath(item.modelUrl, 'model');
+        if (!isModelValid) {
+          // Try alternative path in 3d_Models directory
+          const filename = item.modelUrl.split('/').pop() || '';
+          const alternativePath = `/3d_Models/${filename}`;
+          const isAlternativeValid = await validateMediaPath(alternativePath, 'model');
+          
+          if (isAlternativeValid) {
+            console.log(`Fixed 3D model path for ${item.title}: ${alternativePath}`);
+            enhancedItem.modelUrl = alternativePath;
+          }
+        }
+      }
+      
+      return enhancedItem;
+    }));
+    
+    return validatedItems;
+  };
+  
+  // Helper function to get all video files
+  const getVideoFiles = async (): Promise<string[]> => {
+    // This is just a list of known video files in the project
+    // In a real implementation, you might fetch this from an API or endpoint
+    return [
+      '164d8230-9b7c-4c64-99b5-3301f1b5ab58.mp4',
+      '1def7a12-fc1b-44c0-a194-dce3b16d149f.mp4',
+      '23dbabf0-23d0-485b-99e7-3f8b6f5ed1e7.mp4',
+      '28d3fdb2-88a4-4c96-b20a-dd1a163e44fc.mp4',
+      '51ed0e52-05c7-4b22-b77c-4ad7636c48da.mp4',
+      '66280461-94ba-4f3e-b806-53424eef11f4.mp4',
+      '68887ce9-f7b2-408a-a3be-4a6b7f45352c.mp4',
+      '89e5cee0-56f3-4f75-9c2d-0e3761a6a931.mp4',
+      '97ee7aab-6621-49d2-8fa3-3e59da5131e3.mp4',
+      'cb546f94-b0c7-41fa-833c-ae5cf24f3748.mp4'
+    ];
   };
 
   return (

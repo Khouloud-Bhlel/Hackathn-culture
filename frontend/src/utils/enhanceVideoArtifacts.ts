@@ -26,11 +26,8 @@ export async function enhanceArtifactsWithVideos(): Promise<EnhancedMediaItem[]>
       const enhancedData = data.map(item => {
         if (item.type === 'videos') {
           if (!item.videoUrl) {
-            // Get video file path from thumbnail using the existing utility
-            const thumbnailName = item.thumbnail.split('/').pop() || '';
-            // Direct mapping for video files based on thumbnail names from enhanced artifacts
-            const videoName = thumbnailName.replace(/\.jpeg$|\.jpg$|\.png$/, '.mp4');
-            const videoUrl = `/videos/${videoName}`;
+            // Use the improved getVideoForThumbnail function to map thumbnails to videos
+            const videoUrl = getVideoForThumbnail(item.thumbnail);
             
             console.log(`Adding videoUrl: ${videoUrl} for ${item.title}`);
             
@@ -53,7 +50,19 @@ export async function enhanceArtifactsWithVideos(): Promise<EnhancedMediaItem[]>
   
   // Fallback to enhancing the original media items
   const enhancedData = mediaItems.map(item => {
-    const enhancedItem: EnhancedMediaItem = { ...item };
+    // Create a deep copy of the item we can safely modify
+    const enhancedItem = { ...item } as any;
+    
+    // Fix dimensions structure if needed
+    if (enhancedItem.details && typeof enhancedItem.details.dimensions === 'object') {
+      enhancedItem.details = {
+        ...enhancedItem.details,
+        dimensions: {
+          width: enhancedItem.details.dimensions.width || '',
+          height: enhancedItem.details.dimensions.height || ''
+        }
+      };
+    }
     
     if (item.type === 'videos') {
       // Get video file path from thumbnail
@@ -65,7 +74,7 @@ export async function enhanceArtifactsWithVideos(): Promise<EnhancedMediaItem[]>
       enhancedItem.videoUrl = videoUrl;
     }
     
-    return enhancedItem;
+    return enhancedItem as EnhancedMediaItem;
   });
   
   console.log('Created enhanced artifacts with video URLs from scratch');

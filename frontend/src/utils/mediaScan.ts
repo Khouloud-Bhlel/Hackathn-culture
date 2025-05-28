@@ -14,7 +14,31 @@ export async function scanAndUpdateMediaItems(): Promise<EnhancedMediaItem[]> {
   console.log('Scanning media directories for missing files...');
   
   // Start with existing media items
-  let enhancedItems: EnhancedMediaItem[] = [...mediaItems];
+  let enhancedItems: EnhancedMediaItem[] = mediaItems.map(item => {
+    // Ensure details has all required properties
+    const details = (item.details || {}) as {
+      period?: string;
+      location?: string;
+      material?: string;
+      dimensions?: { width: string; height: string } | string;
+      story?: string;
+    };
+    return {
+      ...item,
+      details: {
+        period: details.period || 'غير معروف',
+        location: details.location || 'غير معروف',
+        material: details.material || 'غير معروف',
+        dimensions: typeof details.dimensions === 'object' 
+          ? { 
+              width: details.dimensions.width || '', 
+              height: details.dimensions.height || '' 
+            }
+          : (details.dimensions || 'غير معروف'),
+        story: details.story || 'قطعة من مجموعة المتحف.'
+      }
+    } as EnhancedMediaItem;
+  });
   
   try {
     // Try to fetch the enhanced data first

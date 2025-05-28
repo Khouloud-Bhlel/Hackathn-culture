@@ -20,7 +20,22 @@ export interface EnhancedMediaItem {
 }
 
 // Variable to store the enhanced media items
-let enhancedMediaItems: EnhancedMediaItem[] = [...mediaItems];
+let enhancedMediaItems: EnhancedMediaItem[] = mediaItems.map(item => ({
+  ...item,
+  details: item.details ? {
+    ...item.details,
+    period: item.details.period || '',
+    location: item.details.location || '',
+    material: item.details.material || '',
+    dimensions: typeof item.details.dimensions === 'string' 
+      ? item.details.dimensions 
+      : {
+          width: item.details.dimensions?.width || '',
+          height: item.details.dimensions?.height || ''
+        },
+    story: item.details.story || ''
+  } : undefined
+}));
 
 /**
  * Load enhanced artifacts from the JSON file
@@ -35,7 +50,6 @@ export async function loadEnhancedArtifacts(): Promise<EnhancedMediaItem[]> {
     const response = await fetch('/enhanced-artifacts.json');
     
     if (response.ok) {
-      const data = await response.json();
       console.log('Enhanced artifacts data loaded successfully from JSON');
       
       // Enhance the data with video URLs
