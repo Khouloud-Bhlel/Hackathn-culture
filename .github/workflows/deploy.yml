@@ -56,9 +56,9 @@ jobs:
           VITE_OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           cd frontend
-          vercel pull --yes --token $VERCEL_TOKEN
+          vercel pull --yes --token="${{ secrets.VERCEL_TOKEN }}"
           vercel build
-          vercel deploy --token $VERCEL_TOKEN --prebuilt
+          vercel deploy --token="${{ secrets.VERCEL_TOKEN }}" --prebuilt
       
       - name: Deploy to Vercel Production
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production' }}
@@ -67,9 +67,9 @@ jobs:
           VITE_OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           cd frontend
-          vercel pull --yes --token $VERCEL_TOKEN --prod
+          vercel pull --yes --token="${{ secrets.VERCEL_TOKEN }}" --prod
           vercel build --prod
-          vercel deploy --token $VERCEL_TOKEN --prebuilt --prod
+          vercel deploy --token="${{ secrets.VERCEL_TOKEN }}" --prebuilt --prod
       
       - name: Create version tag if provided
         if: ${{ github.event.inputs.version != '' }}
