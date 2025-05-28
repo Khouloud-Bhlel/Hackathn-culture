@@ -60,4 +60,4 @@ If you encounter any issues:
 ![image](https://github.com/user-attachments/assets/304e7b68-9ff2-45f3-8ef4-74ddb570d1bc)
 
 
-![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Khouloud-Bhlel/project_hakathon-culture?utm_source=oss&utm_medium=github&utm_campaign=Khouloud-Bhlel%2Fproject_hakathon-culture&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Khouloud-Bhlel/Hackathn-culture?utm_source=oss&utm_medium=github&utm_campaign=Khouloud-Bhlel%2FHackathn-culture&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
