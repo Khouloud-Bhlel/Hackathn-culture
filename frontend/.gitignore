@@ -23,7 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .env
-
+.env.bak
 i add a new thing here !! 
 .vercel
 # Shell scripts
