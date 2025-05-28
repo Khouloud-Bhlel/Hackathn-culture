@@ -65,3 +65,17 @@ If you encounter any issues:
 
 
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Khouloud-Bhlel/Hackathn-culture?utm_source=oss&utm_medium=github&utm_campaign=Khouloud-Bhlel%2FHackathn-culture&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-success)
+![GitHub Workflow Status](https://img.shields.io/badge/GitHub_Actions-Ready-success)
+
+## Continuous Deployment
+
+This project is automatically deployed to Vercel using GitHub Actions. Every push to the main branch triggers a new deployment.
+
+### Deployment Options
+
+1. **Automatic deployment**: Push to the main branch
+2. **Manual deployment**: Use GitHub Actions workflow dispatch
+3. **Version tagging**: Automatically create new versions and tags
+
+For detailed instructions, see [GITHUB_ACTIONS.md](GITHUB_ACTIONS.md) and [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md).

@@ -29,8 +29,6 @@ dist-ssr
 frontend/.env
 frontend/public/runtime-env.js
 frontend/public/runtime-env.js.bak
-enhance-artifacts.sh
-run-openai-enhancer.sh
-start-with-api.sh
-test-api-key.sh
-test-enhanced-features.sh
+
+# Shell scripts
+*.sh

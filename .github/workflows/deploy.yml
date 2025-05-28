@@ -1,0 +1,80 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main, master] # Update this to match your main branch name
+  pull_request:
+    branches: [main, master]
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+        - preview
+        - production
+      version:
+        description: 'Version tag (e.g. v1.0.0)'
+        required: false
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+      
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install --legacy-peer-deps
+      
+      - name: Prepare media paths
+        run: |
+          cd frontend
+          chmod +x ./validate-media-paths-simple.sh
+          ./validate-media-paths-simple.sh
+      
+      - name: Deploy to Vercel Preview
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.environment == 'preview' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VITE_OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          cd frontend
+          vercel pull --yes --token $VERCEL_TOKEN
+          vercel build
+          vercel deploy --token $VERCEL_TOKEN --prebuilt
+      
+      - name: Deploy to Vercel Production
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VITE_OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          cd frontend
+          vercel pull --yes --token $VERCEL_TOKEN --prod
+          vercel build --prod
+          vercel deploy --token $VERCEL_TOKEN --prebuilt --prod
+      
+      - name: Create version tag if provided
+        if: ${{ github.event.inputs.version != '' }}
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git tag -a ${{ github.event.inputs.version }} -m "Version ${{ github.event.inputs.version }}"
+          git push origin ${{ github.event.inputs.version }}

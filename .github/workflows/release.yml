@@ -1,0 +1,94 @@
+name: Create Release and Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Type of version bump'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+        - patch
+        - minor
+        - major
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Get current package version
+        id: package_version
+        run: |
+          cd frontend
+          echo "current_version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      
+      - name: Calculate new version
+        id: new_version
+        run: |
+          current=${{ steps.package_version.outputs.current_version }}
+          IFS='.' read -r -a version_parts <<< "$current"
+          
+          major=${version_parts[0]}
+          minor=${version_parts[1]}
+          patch=${version_parts[2]}
+          
+          case "${{ github.event.inputs.version_type }}" in
+            patch)
+              patch=$((patch + 1))
+              ;;
+            minor)
+              minor=$((minor + 1))
+              patch=0
+              ;;
+            major)
+              major=$((major + 1))
+              minor=0
+              patch=0
+              ;;
+          esac
+          
+          new_version="${major}.${minor}.${patch}"
+          echo "new_version=${new_version}" >> $GITHUB_OUTPUT
+      
+      - name: Update version in package.json
+        run: |
+          cd frontend
+          npm version ${{ steps.new_version.outputs.new_version }} --no-git-tag-version
+      
+      - name: Create tag and commit
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add frontend/package.json
+          git commit -m "Bump version to ${{ steps.new_version.outputs.new_version }}"
+          git tag -a "v${{ steps.new_version.outputs.new_version }}" -m "Version v${{ steps.new_version.outputs.new_version }}"
+      
+      - name: Push changes and tags
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          tags: true
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v${{ steps.new_version.outputs.new_version }}"
+          name: "Release v${{ steps.new_version.outputs.new_version }}"
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
