@@ -13,7 +13,6 @@ echo "╚═══════════════════════�
 # Check for .env file
 if [ ! -f ".env" ]; then
   echo "❌ .env file not found. Creating one..."
-  echo "VITE_OPENAI_API_KEY=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" > .env
   echo "✅ Created .env file with API key"
 fi
 

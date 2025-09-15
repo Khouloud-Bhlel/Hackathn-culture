@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OpenAI API Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <h1>OpenAI API Test</h1>
+  <button id="testButton">Test API</button>
+  <div id="result" class="result">Click the button to test the API connection.</div>
+  
+  <script src="runtime-env.js"></script>
+  <script>
+    document.getElementById('testButton').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = 'Testing API connection...';
+      
+      try {
+        // Check if API key exists
+        const apiKey = window.env && window.env.VITE_OPENAI_API_KEY;
+        if (!apiKey) {
+          resultDiv.innerHTML = '<p class="error">❌ API key not found in window.env</p>';
+          return;
+        }
+        
+        // Display masked API key
+        const firstFour = apiKey.substring(0, 4);
+        const lastFour = apiKey.substring(apiKey.length - 4);
+        resultDiv.innerHTML = `<p>Using API key: ${firstFour}...${lastFour}</p>`;
+        
+        // Create a simple test using the Chat API
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [
+              {
+                role: "system",
+                content: "You are a testing assistant. Respond with 'API TEST SUCCESSFUL' and nothing else."
+              },
+              {
+                role: "user", 
+                content: "Test connection"
+              }
+            ],
+            max_tokens: 20
+          })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          resultDiv.innerHTML += `<p class="error">❌ API Error: ${response.status} ${response.statusText}</p>`;
+          resultDiv.innerHTML += `<pre class="error">${JSON.stringify(error, null, 2)}</pre>`;
+          return;
+        }
+        
+        const data = await response.json();
+        resultDiv.innerHTML += `<p class="success">✅ API test successful!</p>`;
+        resultDiv.innerHTML += `<p>Response: ${data.choices[0].message.content}</p>`;
+      } catch (error) {
+        resultDiv.innerHTML += `<p class="error">❌ Error: ${error.message}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>

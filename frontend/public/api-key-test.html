@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API Key Test</title>
+</head>
+<body>
+  <h1>API Key Test</h1>
+  <div id="result"></div>
+
+  <script src="runtime-env.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const resultDiv = document.getElementById('result');
+      
+      // Check if window.env exists
+      if (!window.env) {
+        resultDiv.innerHTML = '<p style="color: red;">❌ window.env is not defined</p>';
+        return;
+      }
+      
+      // Check if API key exists
+      const apiKey = window.env.VITE_OPENAI_API_KEY;
+      if (!apiKey) {
+        resultDiv.innerHTML = '<p style="color: red;">❌ API key is not defined</p>';
+        return;
+      }
+      
+      // Display masked API key
+      const firstFour = apiKey.substring(0, 4);
+      const lastFour = apiKey.substring(apiKey.length - 4);
+      const keyLength = apiKey.length;
+      
+      resultDiv.innerHTML = `
+        <p style="color: green;">✅ API key is defined</p>
+        <p>Key format: ${firstFour}...${lastFour} (${keyLength} chars)</p>
+        <p>Key type: ${apiKey.startsWith('sk-proj-') ? 'Project-scoped key' : apiKey.startsWith('sk-') ? 'Standard key' : 'Unknown format'}</p>
+        <p>Full API key (for debugging): <code>${apiKey}</code></p>
+      `;
+      
+      // Test Authorization header
+      const authHeader = `Bearer ${apiKey}`;
+      resultDiv.innerHTML += `
+        <p>Authorization header: <code>${authHeader.substring(0, 15)}...${authHeader.substring(authHeader.length - 10)}</code></p>
+      `;
+    });
+  </script>
+</body>
+</html>
